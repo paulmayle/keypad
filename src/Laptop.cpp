@@ -71,7 +71,7 @@ byte colPins[COLS] = { 4, 2, 6, 5, 7, 3 };
 boolean enteringPassword = false;
 boolean locked = true;
 boolean loggedInLEDState = LOW;
-boolean keepAliveMode = false;
+
 
 size_t lockState = 0;
 
@@ -165,10 +165,6 @@ void loop()
       Mouse.move(1, 0, 0);
       Mouse.move(-1, 0, 0);
       toggleLed(LED_YELLOW);
-      if (keepAliveMode)
-      {
-          sendKeys(btnKeepAlive, btnKeepAlive);
-      }
     }
 
 }
@@ -198,23 +194,7 @@ void keypadEvent(KeypadEvent key)
       }
       else
       {
-        if (keepAliveMode)
-        {                        // if this is a key to exit keepAlive mode we do not want to send the sequence
-          keepAliveMode = false; // just turn off keep alive
-        }
-        else
-        {
-          // if the * key is held we can enter keep alive mode
-          if (key == '/')
-          {
-            keepAliveMode = true;
-            flashLed(LED_YELLOW);
-          }
-          else
-          {
-            SendPasswordKeys(key);
-          }
-        }
+        SendPasswordKeys(key);
       }
     }
     break;
@@ -813,17 +793,9 @@ void timerIsr()
         }
         else
         {
-          if (keepAliveMode)
-          {
-            toggleLed(LED_YELLOW);
-          }
-          else
-          {
-            toggleLed(LED_GREEN);
-          }
+          toggleLed(LED_GREEN);
         }
       }
-      
         // New code here to send keep alive string
         if(--keepAliveTimer<0)
       {
